@@ -119,6 +119,7 @@ class PrismaticVLM(VLM):
         prompt_initializer: Type[PromptBuilder] = self.llm_backbone.prompt_builder_fn
         return prompt_initializer(self.model_family, system_prompt=system_prompt)
 
+    # TODO: Need to override, apply masking
     def freeze_backbones(self, stage: str) -> None:
         """
         This function sets `requires_grad_` on each of the component modules explicitly, depending on stage.

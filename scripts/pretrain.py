@@ -76,10 +76,10 @@ class PretrainConfig:
 
     # Tracking Parameters
     trackers: Tuple[str, ...] = ("jsonl", "wandb")                  # Trackers to initialize (if W&B, add config!)
-    # wandb_project: str = "prismatic"                                # Name of W&B project (default: `prismatic`)
-    # wandb_entity: Optional[str] = None                              # Name of W&B entity (default: None)
-    wandb_project: str = "onyx-vlms"
-    wandb_entity: str = "stanford-voltron"
+    wandb_project: str = "prismatic"                                # Name of W&B project (default: `prismatic`)
+    wandb_entity: Optional[str] = None                              # Name of W&B entity (default: None)
+    # wandb_project: str = "onyx-vlms"
+    # wandb_entity: str = "stanford-voltron"
 
     def __post_init__(self) -> None:
         """Set optimization parameters based on `stage` in {"align", "finetune"}."""
@@ -120,6 +120,7 @@ class PretrainConfig:
 @draccus.wrap()
 def pretrain(cfg: PretrainConfig) -> None:
     overwatch.info("Prismatic VLM Training :: Gathering Light")
+    # print(cfg)
 
     # Note => Under `torchrun` initializing `overwatch` will automatically set up `torch.distributed`
     torch.cuda.set_device(device_id := (overwatch.local_rank()))
@@ -169,7 +170,7 @@ def pretrain(cfg: PretrainConfig) -> None:
 
     # [Explicit] Call to `freeze_backbones` here for clarity => will log exactly what is frozen / what's not!
     overwatch.info(f"Invoking `VLM.freeze_backbones()` for `{model_id}` => Training Stage: `{cfg.stage}`")
-    vlm.freeze_backbones(cfg.stage)
+    vlm.freeze_backbones(cfg.stage) # Freeze different backbones depending on stage
 
     # Load Weights from Checkpoint (depends on stage, config)
     overwatch.info(f"Invoking `VLM.load_checkpoint()` for `{model_id}` => Training Stage: `{cfg.stage}`")
